@@ -18,6 +18,8 @@
   },
   "homepage": "https://github.com/adenh93/udemy-node-task-app#readme",
   "dependencies": {
-    "mongodb": "^3.3.3"
+    "mongodb": "^3.3.3",
+    "mongoose": "^5.7.6",
+    "validator": "^11.1.0"
   }
 }
