@@ -14,7 +14,24 @@ app.post("/users", (req, res) => {
   user
     .save()
     .then(result => res.status(201).send(result))
-    .catch(error => res.status(400).send(error));
+    .catch(err => res.status(400).send(err));
+});
+
+app.get("/users", (req, res) => {
+  User.find({})
+    .then(users => res.send(users))
+    .catch(err => res.status(500).send());
+});
+
+app.get("/users/:id", (req, res) => {
+  User.findById(req.params.id)
+    .then(user => {
+      if (!user) {
+        return res.status(404).send();
+      }
+      res.send(user);
+    })
+    .catch(err => res.status(500).send());
 });
 
 app.post("/tasks", (req, res) => {
@@ -23,7 +40,7 @@ app.post("/tasks", (req, res) => {
   task
     .save()
     .then(result => res.status(201).send(result))
-    .catch(error => res.status(400).send(error));
+    .catch(err => res.status(400).send(err));
 });
 
 app.listen(port, () => {
