@@ -8,6 +8,7 @@ connect(
   {
     useNewUrlParser: true,
     useCreateIndex: true,
+    useFindAndModify: false,
     useUnifiedTopology: true
   }
 ).then(() => console.log(`Connected to MongoDB instance on port ${PORT}`));
