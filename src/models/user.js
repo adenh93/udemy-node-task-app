@@ -1,7 +1,8 @@
-const { model } = require("mongoose");
+const { model, Schema } = require("mongoose");
 const { isEmail } = require("validator");
+const bcrypt = require("bcryptjs");
 
-const User = model("User", {
+const userSchema = new Schema({
   name: {
     type: String,
     trim: true,
@@ -41,5 +42,17 @@ const User = model("User", {
     }
   }
 });
+
+userSchema.pre("save", async function(next) {
+  const user = this;
+
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 8);
+  }
+
+  next();
+});
+
+const User = model("User", userSchema);
 
 module.exports = User;

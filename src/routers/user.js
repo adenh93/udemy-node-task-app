@@ -48,10 +48,9 @@ router.patch("/users/:id", async (req, res) => {
   }
 
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-      runValidators: true
-    });
+    const user = await User.findById(req.params.id);
+    updates.forEach(update => (user[update] = req.body[update]));
+    await user.save();
 
     if (!user) {
       return res.status(404).send();
@@ -65,7 +64,7 @@ router.patch("/users/:id", async (req, res) => {
 
 router.delete("/users/:id", async (req, res) => {
   try {
-    const user = await User.findOneAndDelete(req.params.id);
+    const user = await User.findByIdAndDelete(req.params.id);
 
     if (!user) {
       return res.status(404).send();
