@@ -15,9 +15,20 @@ router.post("/tasks", auth, async ({ user, body }, res) => {
   }
 });
 
-router.get("/tasks", auth, async ({ user }, res) => {
+router.get("/tasks", auth, async ({ user, query }, res) => {
+  const match = {};
+
+  if (query.completed) {
+    match.completed = query.completed === "true";
+  }
+
   try {
-    await user.populate("tasks").execPopulate();
+    await user
+      .populate({
+        path: "tasks",
+        match
+      })
+      .execPopulate();
     res.send(user.tasks);
   } catch (e) {
     res.status(500).send();
