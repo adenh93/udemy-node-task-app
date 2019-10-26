@@ -53,6 +53,16 @@ const userSchema = new Schema({
   ]
 });
 
+userSchema.methods.toJSON = function() {
+  const user = this;
+  const profile = user.toObject();
+
+  delete profile.password;
+  delete profile.tokens;
+
+  return profile;
+};
+
 userSchema.methods.generateAuthToken = async function() {
   const user = this;
 
