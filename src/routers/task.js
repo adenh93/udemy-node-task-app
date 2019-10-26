@@ -17,19 +17,19 @@ router.post("/tasks", auth, async ({ user, body }, res) => {
 
 router.get("/tasks", auth, async ({ user }, res) => {
   try {
-    const tasks = await Task.find({ owner: user.id });
-    res.send(tasks);
+    await user.populate("tasks").execPopulate();
+    res.send(user.tasks);
   } catch (e) {
     res.status(500).send();
   }
 });
 
-router.get("/tasks/:id", async (req, res) => {
+router.get("/tasks/:id", auth, async ({ user, params }, res) => {
   try {
-    const task = await Task.findById(req.params.id);
+    const task = await Task.findOne({ _id: params.id, owner: user._id });
 
     if (!task) {
-      return res.status(400).send();
+      return res.status(404).send();
     }
 
     res.send(task);
@@ -38,8 +38,8 @@ router.get("/tasks/:id", async (req, res) => {
   }
 });
 
-router.patch("/tasks/:id", async (req, res) => {
-  const updates = Object.keys(req.body);
+router.patch("/tasks/:id", auth, async ({ user, params, body }, res) => {
+  const updates = Object.keys(body);
   const allowedUpdates = ["description", "completed"];
   const isValidUpdate = updates.every(update =>
     allowedUpdates.includes(update)
@@ -50,14 +50,14 @@ router.patch("/tasks/:id", async (req, res) => {
   }
 
   try {
-    const task = await Task.findById(req.params.id);
-    updates.forEach(update => (task[update] = req.body[update]));
-    await task.save();
+    const task = await Task.findOne({ _id: params.id, owner: user._id });
 
     if (!task) {
       return res.status(404).send();
     }
 
+    updates.forEach(update => (task[update] = body[update]));
+    await task.save();
     res.send(task);
   } catch (e) {
     res.status(400).send(e);
