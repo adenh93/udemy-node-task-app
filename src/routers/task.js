@@ -15,18 +15,25 @@ router.post("/tasks", auth, async ({ user, body }, res) => {
   }
 });
 
+//GET /tasks?completed={true|false}
+//GET /tasks?limit={number}&skip={number}
 router.get("/tasks", auth, async ({ user, query }, res) => {
+  const { completed, limit, skip } = query;
   const match = {};
 
-  if (query.completed) {
-    match.completed = query.completed === "true";
+  if (completed) {
+    match.completed = completed === "true";
   }
 
   try {
     await user
       .populate({
         path: "tasks",
-        match
+        match,
+        options: {
+          limit: parseInt(limit),
+          skip: parseInt(skip)
+        }
       })
       .execPopulate();
     res.send(user.tasks);
