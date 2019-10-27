@@ -74,6 +74,7 @@ userSchema.methods.toJSON = function() {
 
   delete profile.password;
   delete profile.tokens;
+  delete profile.avatar;
 
   return profile;
 };
