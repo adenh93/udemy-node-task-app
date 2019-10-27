@@ -5,7 +5,6 @@ const auth = require("../middleware/auth");
 
 const router = new express.Router();
 const upload = new multer({
-  dest: "avatars",
   limits: {
     fileSize: 1000000
   },
@@ -98,7 +97,9 @@ router.delete("/users/me", auth, async ({ user }, res) => {
 router.post(
   "/users/me/avatar",
   [auth, upload.single("avatar")],
-  (req, res) => {
+  async ({ file, user }, res) => {
+    user.avatar = file.buffer;
+    await user.save();
     res.send();
   },
   (error, req, res, next) => {
