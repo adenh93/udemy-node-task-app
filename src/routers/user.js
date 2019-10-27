@@ -17,8 +17,8 @@ const upload = new multer({
   }
 });
 
-router.post("/users", async (req, res) => {
-  const user = new User(req.body);
+router.post("/users", async ({ body }, res) => {
+  const user = new User(body);
 
   try {
     await user.save();
@@ -29,8 +29,8 @@ router.post("/users", async (req, res) => {
   }
 });
 
-router.post("/users/login", async (req, res) => {
-  const { email, password } = req.body;
+router.post("/users/login", async ({ body }, res) => {
+  const { email, password } = body;
 
   try {
     const user = await User.findByCredentials(email, password);
@@ -61,8 +61,8 @@ router.post("/users/logoutAll", auth, async ({ user }, res) => {
   }
 });
 
-router.get("/users/me", auth, async (req, res) => {
-  res.send(req.user);
+router.get("/users/me", auth, async ({ user }, res) => {
+  res.send(user);
 });
 
 router.patch("/users/me", auth, async ({ user, body }, res) => {
@@ -106,5 +106,15 @@ router.post(
     res.status(400).send({ error: error.message });
   }
 );
+
+router.delete("/users/me/avatar", auth, async ({ user }, res) => {
+  try {
+    user.avatar = undefined;
+    await user.save();
+    res.send();
+  } catch (e) {
+    res.status(500).send();
+  }
+});
 
 module.exports = router;
