@@ -1,7 +1,6 @@
 const { connect } = require("mongoose");
 
-const PORT = process.env.PORT || 27017;
-const connectionString = `mongodb://127.0.0.1:${PORT}/task-manager-api`;
+const connectionString = process.env.MONGODB_URL;
 
 connect(
   connectionString,
@@ -11,4 +10,4 @@ connect(
     useFindAndModify: false,
     useUnifiedTopology: true
   }
-).then(() => console.log(`Connected to MongoDB instance on port ${PORT}`));
+);
